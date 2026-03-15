@@ -1,16 +1,39 @@
 # Módulo inicial de procesamiento de ventas
 
+
+def es_venta_valida(registro):
+    """Comprobar si el registro es una venta válida."""
+    return (
+        registro['tipo'] == 'venta'
+        and registro['monto'] > 0
+        and registro['estado'] == 'completado'
+    )
+
+
+def es_devolucion_valida(registro):
+    """Comprobar si el registro es una devolución válida."""
+    return registro['tipo'] == 'devolucion' and registro['monto'] > 0
+
+
+def calcular_monto_venta(registro):
+    """Calcular el monto final de una venta aplicando los descuentos."""
+    if registro['monto'] > 1000 or (
+        registro['cliente_tipo'] == 'VIP' and registro['monto'] > 500
+    ):
+        monto_final = registro['monto'] * 0.9
+    else:
+        monto_final = registro['monto']
+    return monto_final
+
+
 def procesar_ventas(datos):
-    # Esta función hace muchas cosas a la vez
+    # Esta función hace muchas cosas a la vez (código original refactorizado poco a poco)
     resultados = []
     for registro in datos:
         # Comprobar si es una venta válida
-        if registro['tipo'] == 'venta' and registro['monto'] > 0 and registro['estado'] == 'completado':
+        if es_venta_valida(registro):
             # Aplicar descuento si el monto es alto o es cliente VIP
-            if registro['monto'] > 1000 or (registro['cliente_tipo'] == 'VIP' and registro['monto'] > 500):
-                monto_final = registro['monto'] * 0.9
-            else:
-                monto_final = registro['monto']
+            monto_final = calcular_monto_venta(registro)
 
             # Formatear el resultado
             mensaje = "Cliente: " + registro['nombre'] + " - Total: " + str(monto_final)
@@ -18,7 +41,7 @@ def procesar_ventas(datos):
 
             # Imprimir log de auditoría (duplicado innecesario)
             print("Procesando registro de: " + registro['nombre'])
-        elif registro['tipo'] == 'devolucion' and registro['monto'] > 0:
+        elif es_devolucion_valida(registro):
             # Lógica de devoluciones mezclada
             monto_final = registro['monto'] * -1
             mensaje = "Cliente: " + registro['nombre'] + " - Retorno: " + str(monto_final)
