@@ -1,4 +1,8 @@
 # Módulo inicial de procesamiento de ventas
+# Constantes de negocio
+MONTO_ALTO = 1000
+MONTO_VIP = 500
+FACTOR_DESCUENTO = 0.9
 
 
 def es_venta_valida(registro):
@@ -17,13 +21,14 @@ def es_devolucion_valida(registro):
 
 def calcular_monto_venta(registro):
     """Calcular el monto final de una venta aplicando los descuentos."""
-    if registro['monto'] > 1000 or (
-        registro['cliente_tipo'] == 'VIP' and registro['monto'] > 500
+    if registro['monto'] > MONTO_ALTO or (
+        registro['cliente_tipo'] == 'VIP' and registro['monto'] > MONTO_VIP
     ):
-        monto_final = registro['monto'] * 0.9
+        monto_final = registro['monto'] * FACTOR_DESCUENTO
     else:
         monto_final = registro['monto']
     return monto_final
+
 
 
 def procesar_ventas(datos):
